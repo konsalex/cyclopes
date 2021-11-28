@@ -1,0 +1,22 @@
+server: false
+serverURL: https://www.playtesting.games/
+headless: false
+buildDir: "./public"
+imagesDir: "./images"
+multithreading: false
+pages:
+  - path: "/"
+    device: "both"
+    delay: 2000
+    waitSelector: "#rcc-confirm-button"
+    code: |
+      const cookiesButton = document.querySelector("#rcc-confirm-button")
+      if (cookiesButton) {
+          cookiesButton.click()
+      }
+    screenshot: "fullpage"
+  - path: "/about"
+    device: "mobile"
+    screenshot: "fullpage"
+  - path: "/#features"
+    device: "mobile"
