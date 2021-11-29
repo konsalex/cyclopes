@@ -2,8 +2,7 @@ package cyclops
 
 import (
 	"errors"
-	"io/ioutil"
-	"log"
+	"fmt"
 	"net/url"
 	"os"
 	"strings"
@@ -24,10 +23,10 @@ func (config *Configuration) ExtractServerURL() (string, error) {
 	return serverPath, nil
 }
 
+/** Check if path exists, else create it */
 func CheckPath(path string) error {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		err := os.Mkdir(path, 0744)
-		return err
+		return os.MkdirAll(path, 0755)
 	}
 	return nil
 }
@@ -53,12 +52,10 @@ func ConstructServerURL(rawURL string) (string, error) {
 
 func SaveFile(image []byte, path string, filename string) error {
 
-	if err := CheckPath(path); err != nil {
-		FatalPrint(err)
-	}
+	fullpathFilename := fmt.Sprintf("%s/%s.png", strings.TrimSuffix(path, "/"), filename)
 
-	if err := ioutil.WriteFile(strings.TrimSuffix(path, "/")+"/"+filename+".png", image, 0o644); err != nil {
-		log.Fatal(err)
+	if err := os.WriteFile(fullpathFilename, image, 0644); err != nil {
+		return err
 	}
 
 	return nil

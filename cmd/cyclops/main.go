@@ -91,6 +91,10 @@ func Start(configPath string) {
 		FatalPrint(err)
 	}
 
+	if err := CheckPath(conf.ImagesDir); err != nil {
+		FatalPrint(err)
+	}
+
 	SuccessPrint("Server url is: " + serverURL)
 	SuccessPrint("Dev server will start: " + strconv.FormatBool(conf.Server))
 	SuccessPrint("Images will be saved at: " + conf.ImagesDir)

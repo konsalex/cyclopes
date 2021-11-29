@@ -12,6 +12,9 @@ var UserServer = Configuration{Server: false, ServerURL: UserDefinedURL}
 var Fail = Configuration{Server: false}
 
 func TestExtractServerURL(t *testing.T) {
+
+	t.Parallel()
+
 	type args struct {
 		config *Configuration
 	}
@@ -35,6 +38,9 @@ func TestExtractServerURL(t *testing.T) {
 }
 
 func TestConstructServerURL(t *testing.T) {
+
+	t.Parallel()
+
 	type args struct {
 		rawURL string
 	}

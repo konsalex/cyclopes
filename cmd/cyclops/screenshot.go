@@ -68,7 +68,6 @@ func Screenshot(
 			log.Fatal(err)
 		}
 
-		// filename = string(pageConfig.Device) + "-" + strings.Replace(pageConfig.Path, "/", "", -1)
 		filename = fmt.Sprintf("%s-%s", string(pageConfig.Device), strings.Replace(pageConfig.Path, "/", "", -1))
 
 		error := SaveFile(buf, config.ImagesDir, filename)
@@ -102,7 +101,6 @@ func Screenshot(
 	bar.Add(1)
 }
 
-// Note: chromedp.FullScreenshot overrides the device's emulation settings. Reset
 func fullScreenshot(
 	urlstr string,
 	quality int,
