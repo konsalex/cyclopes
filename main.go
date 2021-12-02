@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 NAME HERE <EMAIL ADDRESS>
+Copyright © 2021 NAME HERE <konsalexee@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/konsalex/eidetic/cmd"
+import "github.com/konsalex/cyclopes/cmd"
 
 func main() {
 	cmd.Execute()

@@ -1,0 +1,145 @@
+// package cyclopes
+
+// import (
+// 	"context"
+// 	"log"
+// 	"strconv"
+// 	"sync"
+
+// 	"github.com/chromedp/chromedp"
+// 	"github.com/google/uuid"
+// 	"github.com/schollz/progressbar/v3"
+// 	"gopkg.in/yaml.v2"
+// )
+
+// type DEVICE string
+
+// const DESKTOP DEVICE = "desktop"
+// const MOBILE DEVICE = "mobile"
+// const BOTH DEVICE = "both"
+
+// const DEFAULT_URL = "http://localhost:3000"
+
+// type PageConfig struct {
+// 	// Relative path to visit
+// 	Path string
+// 	// Device to screenshot
+// 	Device DEVICE
+// 	// Delay in ms
+// 	Delay int
+// 	// Code (Javascript code to execute)
+// 	Code string
+// 	// Selector to wait
+// 	WaitSelector string
+// }
+
+// type Configuration struct {
+// 	PageConfig `yaml:",inline"`
+
+// 	// If the users want to debug
+// 	Headless bool `yaml:"headless"`
+// 	// Directory to save images
+// 	ImagesDir string `yaml:"imagesDir"`
+// 	// If multi-threading is enabled (for multiple Chrome instances?)
+// 	Multithreading bool
+// 	// Testing session id
+// 	sessionID string
+
+// 	Pages []PageConfig
+
+// 	// If the server is enabled we should start one
+// 	Server bool
+// 	// The below options are needed if we should
+// 	// spin a server to serve the build
+// 	// The path to the build directory
+// 	BuildDir string `yaml:"buildDir"`
+// 	// Server's URL (used only if Server is false)
+// 	ServerURL string `yaml:"serverURL"`
+// }
+
+// var data = `
+// server: false
+// serverURL: https://www.playtesting.games/
+// headless: false
+// buildDir: "./public"
+// imagesDir: "./images"
+// multithreading: false
+// pages:
+//   - path: "/"
+//     device: "both"
+//     delay: 2000
+//     waitSelector: "#rcc-confirm-button"
+//     code: |
+//       const cookiesButton = document.querySelector("#rcc-confirm-button")
+//       if (cookiesButton) {
+//           cookiesButton.click()
+//       }
+//   - path: "/about"
+// `
+
+// func Start(configPath string) {
+// 	// YAML Unmarshal
+// 	conf := Configuration{
+// 		Server:         false,
+// 		BuildDir:       "/dist",
+// 		ImagesDir:      "./cyclopes",
+// 		Multithreading: true,
+// 		Headless:       false,
+// 		sessionID:      uuid.NewString(),
+// 	}
+
+// 	err := yaml.Unmarshal([]byte(data), &conf)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	serverURL, err := conf.ExtractServerURL()
+// 	if err != nil {
+// 		FatalPrint(err)
+// 	}
+
+// 	SuccessPrint("Server url is: " + serverURL)
+// 	SuccessPrint("Dev server will start: " + strconv.FormatBool(conf.Server))
+// 	SuccessPrint("Images will be saved at: " + conf.ImagesDir)
+// 	SuccessPrint("Session ID: " + conf.sessionID)
+
+// 	/** Enable Headless mode for testing **/
+// 	var opts []chromedp.ExecAllocatorOption
+// 	opts = chromedp.DefaultExecAllocatorOptions[:]
+
+// 	if conf.Headless {
+// 		WarningPrint("Headless mode is enabled")
+// 		opts = append(opts, chromedp.Flag("headless", false),
+// 			chromedp.Flag("disable-gpu", false),
+// 			chromedp.Flag("enable-automation", false),
+// 		)
+// 	}
+
+// 	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
+// 	defer cancel()
+
+// 	/** Initialise ChromeDp **/
+// 	ctx, cancel := chromedp.NewContext(allocCtx)
+// 	defer cancel()
+
+// 	lock := sync.RWMutex{}
+
+// 	var wg sync.WaitGroup
+
+// 	// var srvr *Server
+// 	// Source: https://stackoverflow.com/a/42533360/3247715
+// 	if conf.Server {
+// 		Server(conf.BuildDir)
+// 	}
+
+// 	bar := progressbar.Default(int64(len(conf.Pages)))
+// 	for _, v := range conf.Pages {
+// 		wg.Add(1)
+// 		go func(v PageConfig) {
+// 			Screenshot(ctx, &conf, &v, &wg, &lock, bar)
+// 		}(v)
+// 	}
+
+// 	wg.Wait()
+// 	SuccessPrint("Finised visual testing")
+// }

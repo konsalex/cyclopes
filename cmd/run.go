@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/konsalex/eidetic/cmd/cyclops"
+	"github.com/konsalex/cyclopes/cmd/cyclopes"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +20,7 @@ The _quick and dirty_ testing manifesto:
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("🧿 Starting visual testing")
-		cyclops.Start(cfgFile)
+		cyclopes.Start(cfgFile)
 	},
 }
 

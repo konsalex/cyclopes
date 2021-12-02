@@ -14,7 +14,6 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-
 # General
 .DS_Store
 .AppleDouble
@@ -41,3 +40,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Custom
+images/

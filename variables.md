@@ -39,3 +39,7 @@ docker exec -it testing -v ${PWD}:/var/folder alpine /bin/bash
 1. May have Cookies pop-up we want to disable
 2. Check if directory already exists to save images else create
 3. If the previous page is for example "/" and the next is "/#sda" the page is not reloading the Javascript script is raising errors like "scrollToBottomStepper" has already been declared
+
+4. Better Error message for fallback yml file
+5. No such file or directory "./images"
+6. "-.jpeg" give UX friendly name

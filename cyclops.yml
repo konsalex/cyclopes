@@ -20,3 +20,6 @@ pages:
     screenshot: "fullpage"
   - path: "/#features"
     device: "mobile"
+slack:
+  OAUTH_TOKEN: xoxb-339937470980-2788496503985-E9o8DABUyi04kAdkf6J6XuKE
+  CHANNEL_ID: C02NM4RC8FQ
