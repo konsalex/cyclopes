@@ -1,0 +1,9 @@
+# Directory where the images will be saved
+# or retrieved from the channel adapters
+imagesDir: "./images"
+# Adapters
+# Each adapter will have it's own parameters
+adapters:
+  slack:
+    OAUTH_TOKEN: xoxb-339937470980-2788496503985-E9o8DABUyi04kAdkf6J6XuKE
+    CHANNEL_ID: C02NM4RC8FQ

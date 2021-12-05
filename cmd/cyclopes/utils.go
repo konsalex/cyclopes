@@ -1,26 +1,22 @@
 package cyclopes
 
 import (
-	"errors"
 	"fmt"
 	"net/url"
 	"os"
 	"strings"
 )
 
-func (config *Configuration) ExtractServerURL() (string, error) {
+func (config *Configuration) ExtractServerURL() string {
 	var serverPath string
 
-	if config.Server {
+	if config.Visual.RemoteURL == "" {
 		serverPath = DEFAULT_URL
 	} else {
-		if config.ServerURL == "" {
-			return "", errors.New("Server url is not specified")
-		}
-		serverPath = config.ServerURL
+		serverPath = config.Visual.RemoteURL
 	}
 
-	return serverPath, nil
+	return serverPath
 }
 
 /** Check if path exists, else create it */

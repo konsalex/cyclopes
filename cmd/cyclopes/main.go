@@ -2,13 +2,15 @@ package cyclopes
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
-	"log"
-	"strconv"
 
 	"github.com/chromedp/chromedp"
+	"github.com/fatih/color"
 	"github.com/google/uuid"
-	adapters "github.com/konsalex/cyclopes/cmd/cyclopes/adapters"
+
+	// adapters "github.com/konsalex/cyclopes/cmd/cyclopes/adapters"
+	"github.com/pterm/pterm"
 	"github.com/schollz/progressbar/v3"
 	"gopkg.in/yaml.v2"
 )
@@ -43,105 +45,114 @@ type PageConfig struct {
 	Screenshot SCREENSHOTSIZE
 }
 
-type Configuration struct {
-	PageConfig `yaml:",inline"`
-
-	// If the users want to debug
-	Headless bool `yaml:"headless"`
-	// Directory to save images
-	ImagesDir string `yaml:"imagesDir"`
-	// If multi-threading is enabled (for multiple Chrome instances?)
-	Multithreading bool
-	// Testing session id
-	sessionID string
-
+type VisualTesting struct {
 	Pages []PageConfig
 
-	// If the server is enabled we should start one
-	Server bool
-	// The below options are needed if we should
-	// spin a server to serve the build
-	// The path to the build directory
+	// If the users want to debug
+	Headless *bool `yaml:"headless"`
+
+	// Base url to visit in our session
+	RemoteURL string `yaml:"remoteURL"`
+	/* Website directory
+	(used only if remoteURL is not
+	defined to serve the static assets)
+	*/
 	BuildDir string `yaml:"buildDir"`
-	// Server's URL (used only if Server is false)
-	ServerURL string `yaml:"serverURL"`
+}
+
+type Configuration struct {
+	PageConfig    `yaml:",inline"`
+	VisualTesting `yaml:",inline"`
+	// Directory to save/retrieve images
+	ImagesDir string         `yaml:"imagesDir"`
+	Visual    *VisualTesting `yaml:"visual,omitempty"`
+	// Testing session id
+	sessionID string
+	Adapters  map[string]interface{} `yaml:"adapters"`
 }
 
 func Start(configPath string) {
 	// YAML Unmarshal
 	conf := Configuration{
-		Server:         false,
-		BuildDir:       "/dist",
-		ImagesDir:      "./cyclopes",
-		Multithreading: true,
-		Headless:       false,
-		sessionID:      uuid.NewString(),
+		ImagesDir: "./cyclopes",
+		sessionID: uuid.NewString(),
 	}
 
-	// Open config file
+	// Read config file
 	yamlFile, err := ioutil.ReadFile(configPath)
 	if err != nil {
-		FatalPrint(err)
+		pterm.Fatal.Println(err)
 	}
+
 	err = yaml.Unmarshal(yamlFile, &conf)
 	if err != nil {
-		log.Fatal(err)
+		pterm.Fatal.Println(err)
 	}
 
-	slackAdapter := adapters.SlackAdapter{Yaml: &yamlFile}
-	err = slackAdapter.Preflight()
-	if err != nil {
-		FatalPrint(err)
+	if conf.Visual != nil {
+		pterm.Info.Println("Session ID: " + color.GreenString(conf.sessionID))
+
+		if err := CheckPath(conf.ImagesDir); err != nil {
+			pterm.Fatal.Println(err)
+		}
+		pterm.Info.Println("Images will be saved at: " + color.GreenString(conf.ImagesDir))
+
+		// var srvr *Server
+		// Source: https://stackoverflow.com/a/42533360/3247715
+		if conf.Visual.RemoteURL == "" {
+			if conf.Visual.BuildDir == "" {
+				pterm.Fatal.Println("You must define either remoteURL or buildDir")
+			}
+			Server(conf.VisualTesting.BuildDir)
+		}
+
+		/** Enable Headless mode for testing **/
+		var opts []chromedp.ExecAllocatorOption
+		opts = chromedp.DefaultExecAllocatorOptions[:]
+
+		if conf.Visual.Headless != nil && !*conf.Visual.Headless {
+			pterm.Warning.Println("Headless mode is enabled")
+			opts = append(opts, chromedp.Flag("headless", false),
+				chromedp.Flag("disable-gpu", false),
+				chromedp.Flag("enable-automation", false),
+			)
+		}
+
+		allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
+		defer cancel()
+
+		/** Initialise ChromeDp **/
+		ctx, cancel := chromedp.NewContext(allocCtx)
+		defer cancel()
+
+		pterm.Success.Println("Starting Visual Testing session")
+		bar := progressbar.Default(int64(len(conf.Visual.Pages)))
+		for _, v := range conf.Visual.Pages {
+			Screenshot(ctx, &conf, &v, bar)
+		}
+	} else {
+		pterm.Warning.Println("Skipping visual testing")
 	}
 
-	serverURL, err := conf.ExtractServerURL()
-	if err != nil {
-		FatalPrint(err)
+	fmt.Println(conf.Adapters)
+	for key := range conf.Adapters {
+		fmt.Println(key)
+		if AdaptersMap[key] != nil {
+			// fmt.Println(AdaptersMap[key])
+			// AdaptersMap[key]{Yaml}
+
+		}
 	}
+	// slackAdapter := adapters.SlackAdapter{Yaml: &yamlFile}
+	// err = slackAdapter.Preflight()
+	// if err != nil {
+	// 	pterm.Fatal.Println(err)
+	// }
 
-	if err := CheckPath(conf.ImagesDir); err != nil {
-		FatalPrint(err)
-	}
+	// err = slackAdapter.Execute(conf.ImagesDir)
+	// if err != nil {
+	// 	pterm.Error.Println(err)
+	// }
 
-	SuccessPrint("Server url is: " + serverURL)
-	SuccessPrint("Dev server will start: " + strconv.FormatBool(conf.Server))
-	SuccessPrint("Images will be saved at: " + conf.ImagesDir)
-	SuccessPrint("Session ID: " + conf.sessionID)
-
-	/** Enable Headless mode for testing **/
-	var opts []chromedp.ExecAllocatorOption
-	opts = chromedp.DefaultExecAllocatorOptions[:]
-
-	if conf.Headless {
-		WarningPrint("Headless mode is enabled")
-		opts = append(opts, chromedp.Flag("headless", false),
-			chromedp.Flag("disable-gpu", false),
-			chromedp.Flag("enable-automation", false),
-		)
-	}
-
-	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
-	defer cancel()
-
-	/** Initialise ChromeDp **/
-	ctx, cancel := chromedp.NewContext(allocCtx)
-	defer cancel()
-
-	// var srvr *Server
-	// Source: https://stackoverflow.com/a/42533360/3247715
-	if conf.Server {
-		Server(conf.BuildDir)
-	}
-
-	bar := progressbar.Default(int64(len(conf.Pages)))
-	for _, v := range conf.Pages {
-		Screenshot(ctx, &conf, &v, bar)
-	}
-
-	err = slackAdapter.Execute(conf.ImagesDir)
-	if err != nil {
-		FatalPrint(err)
-	}
-
-	SuccessPrint("Finised visual testing")
+	pterm.Success.Println("Finised Visual Testing")
 }

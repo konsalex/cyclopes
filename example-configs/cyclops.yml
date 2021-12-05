@@ -1,0 +1,45 @@
+# Directory where the images will be saved
+# or retrieved from the channel adapters
+imagesDir: "./images"
+
+# If visual is defined, it will be the first step
+# where the pages defined will be visited and screenshotted
+# one by one with the defined order
+visual:
+  # (Optional): URL to visit, if this field does
+  # not exist, builDir is required
+  remoteURL: https://www.neo4j.com/
+  # Directory to serve for testing. Required
+  # only if remoteURL is missing
+  buildDir: "./public"
+  # If the testing session will be headless or not
+  headless: true
+  # Pages to visit and screenshot
+  pages:
+    # Path of the page
+    - path: "/"
+      # Type of device to screenshot
+      device: "both"
+      # Delay after the page is loaded
+      delay: 2000
+      # Wait for an element to appear
+      waitSelector: "#NeoCybotCookiebotDialogBodyButtonAccept"
+      # If the screenshot should be fullpage or viewport
+      screenshot: "fullpage"
+      # Code to be executed inside the webpage
+      # This can help to remove Cookies for example
+      code: |
+        const cookiesButton = document.querySelector("#NeoCybotCookiebotDialogBodyButtonAccept")
+        if (cookiesButton) {
+            cookiesButton.click()
+        }
+    - path: "/product"
+      device: "mobile"
+      screenshot: "fullpage"
+    - path: "/product/graph-data-science/"
+# Adapters
+# Each adapter will have it's own parameters
+adapters:
+  slack:
+    OAUTH_TOKEN: xoxb-339937470980-2788496503985-E9o8DABUyi04kAdkf6J6XuKE
+    CHANNEL_ID: C02NM4RC8FQ

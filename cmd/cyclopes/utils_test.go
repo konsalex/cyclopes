@@ -1,17 +1,17 @@
 package cyclopes
 
 import (
-	"fmt"
 	"testing"
 )
 
-var UserDefinedURL = "http://localhost:8080"
+var UserDefinedURL = "https://www.visualeyes.design"
 
-var Default = Configuration{Server: true}
-var UserServer = Configuration{Server: false, ServerURL: UserDefinedURL}
-var Fail = Configuration{Server: false}
+var defaultVisual = VisualTesting{}
+var remote = VisualTesting{RemoteURL: "https://www.visualeyes.design"}
+var Default = Configuration{VisualTesting: defaultVisual}
+var RemoteURL = Configuration{VisualTesting: remote}
 
-func TestExtractServerURL(t *testing.T) {
+func TestExtractServerURsL(t *testing.T) {
 
 	t.Parallel()
 
@@ -25,12 +25,11 @@ func TestExtractServerURL(t *testing.T) {
 		error bool
 	}{
 		{name: "Default server url", want: DEFAULT_URL, args: args{config: &Default}},
-		{name: "Defined server url", want: UserDefinedURL, args: args{config: &UserServer}},
-		{name: "Defined server url", error: true, args: args{config: &Fail}},
+		{name: "Defined server url", want: UserDefinedURL, args: args{config: &RemoteURL}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got, err := tt.args.config.ExtractServerURL(); got != tt.want || (err == nil) && tt.error {
+			if got := tt.args.config.ExtractServerURL(); got != tt.want {
 				t.Errorf("ExtractServerURL() = %v, want %v", got, tt.want)
 			}
 		})
@@ -60,7 +59,7 @@ func TestConstructServerURL(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := ConstructServerURL(tt.args.rawURL)
-			fmt.Println(got)
+
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ConstructServerURL() error = %v, wantErr %v", err, tt.wantErr)
 				return

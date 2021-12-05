@@ -3,13 +3,13 @@ package cyclopes
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/url"
 	"strings"
 	"time"
 
 	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/chromedp"
+	"github.com/pterm/pterm"
 	"github.com/schollz/progressbar/v3"
 )
 
@@ -19,14 +19,11 @@ func Screenshot(
 	pageConfig *PageConfig,
 	bar *progressbar.ProgressBar) {
 
-	serverPath, err := config.ExtractServerURL()
-	if err != nil {
-		FatalPrint(err)
-	}
+	serverPath := config.ExtractServerURL()
 
 	serverURLConstructed, err := ConstructServerURL(serverPath)
 	if err != nil {
-		FatalPrint(err)
+		pterm.Fatal.Println(err)
 	}
 
 	var buf []byte
@@ -39,17 +36,17 @@ func Screenshot(
 			chromedp.Sleep(time.Millisecond * 2000),
 			chromedp.Location(&location),
 		}); err != nil {
-		log.Fatal(err)
+		pterm.Fatal.Println(err)
 	}
 
 	currentURL, err := url.Parse(location)
 	if err != nil {
-		log.Fatal(err)
+		pterm.Error.Println(err)
 	}
 
 	parsedURL, err := url.Parse(pageConfig.Path)
 	if err != nil {
-		log.Fatal(err)
+		pterm.Error.Println(err)
 	}
 
 	scrolling := parsedURL.Path != currentURL.Path
@@ -65,15 +62,14 @@ func Screenshot(
 			pageConfig.Device,
 			scrolling,
 			&buf)); err != nil {
-			log.Fatal(err)
+			pterm.Fatal.Println(err)
 		}
 
 		filename = fmt.Sprintf("%s-%s", string(pageConfig.Device), strings.Replace(pageConfig.Path, "/", "", -1))
 
 		error := SaveFile(buf, config.ImagesDir, filename)
 		if error != nil {
-			WarningPrint("Error happened when trying to create image: " + "testing")
-			WarningPrint(error)
+			pterm.Warning.Println(err)
 		}
 	} else {
 		devices := []DEVICE{DESKTOP, MOBILE}
@@ -86,13 +82,12 @@ func Screenshot(
 				device,
 				scrolling && idx == 0,
 				&buf)); err != nil {
-				log.Fatal(err)
+				pterm.Fatal.Println(err)
 			}
 			filename = fmt.Sprintf("%s-%s", string(device), strings.Replace(pageConfig.Path, "/", "", -1))
 			error := SaveFile(buf, config.ImagesDir, filename)
 			if error != nil {
-				WarningPrint("Error happened when trying to create image: " + "testing")
-				WarningPrint(error)
+				pterm.Warning.Println(err)
 			}
 		}
 	}
@@ -125,7 +120,7 @@ func fullScreenshot(
 	}
 
 	/**
-	 * Scroll with steps will the bottom of the page
+	 * Scroll with steps till the bottom of the page
 	 * to force images to download
 	 * (Example Gatsby)
 	 */
@@ -170,7 +165,6 @@ func fullScreenshot(
 
 	/** Waiting for an element to appear */
 	if pageConfig.WaitSelector != "" {
-		SuccessPrint("Selector is :" + pageConfig.WaitSelector)
 		tasks = append(tasks,
 			chromedp.Tasks{
 				chromedp.WaitVisible(pageConfig.WaitSelector)},

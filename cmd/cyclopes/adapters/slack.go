@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"sort"
 	"strings"
 
+	"github.com/pterm/pterm"
 	"github.com/slack-go/slack"
 	"gopkg.in/yaml.v2"
 )
@@ -27,20 +27,24 @@ type SlackRoot struct {
 	Slack              SlackConfiguration `yaml:"slack"`
 }
 
+type Adapters struct {
+	Adapters SlackRoot `yaml:"adapters"`
+}
+
 func (s *SlackAdapter) Preflight() error {
 
-	conf := SlackRoot{}
+	conf := Adapters{}
 	err := yaml.Unmarshal(*s.Yaml, &conf)
 
 	if err != nil {
 		return err
 	}
 
-	if conf.Slack.CHANNEL_ID == "" || conf.Slack.OAUTH_TOKEN == "" {
+	if conf.Adapters.Slack.CHANNEL_ID == "" || conf.Adapters.Slack.OAUTH_TOKEN == "" {
 		return errors.New("slack configuration is not set properly")
 	}
 
-	api := slack.New(conf.Slack.OAUTH_TOKEN)
+	api := slack.New(conf.Adapters.Slack.OAUTH_TOKEN)
 
 	// Validate that user can make authenticated requests
 	_, err = api.AuthTest()
@@ -52,14 +56,14 @@ func (s *SlackAdapter) Preflight() error {
 }
 
 func (s *SlackAdapter) Execute(imagePath string) error {
-	conf := SlackRoot{}
+	conf := Adapters{}
 	err := yaml.Unmarshal(*s.Yaml, &conf)
 
 	if err != nil {
 		return err
 	}
 
-	api := slack.New(conf.Slack.OAUTH_TOKEN)
+	api := slack.New(conf.Adapters.Slack.OAUTH_TOKEN)
 
 	/*
 		Source: https://stackoverflow.com/a/63391026/3247715
@@ -105,7 +109,7 @@ func (s *SlackAdapter) Execute(imagePath string) error {
 		}
 
 		params := slack.FileUploadParameters{
-			Filetype: "png",
+			Filetype: "jpeg",
 			Title:    file,
 			Filename: file,
 			Reader:   strings.NewReader(string(dat)),
@@ -128,15 +132,15 @@ func (s *SlackAdapter) Execute(imagePath string) error {
 	}
 
 	channelId, timestamp, err := api.PostMessage(
-		conf.Slack.CHANNEL_ID,
+		conf.Adapters.Slack.CHANNEL_ID,
 		slack.MsgOptionText(mrkdwnBody, false),
 	)
 
 	if err != nil {
-		log.Fatalf("%s\n", err)
+		pterm.Fatal.Println(err)
 	}
 
-	fmt.Sprintln("Message successfully sent to Channel %s at %s\n", channelId, timestamp)
+	pterm.Success.Sprintfln("Message successfully sent to Channel %s at %s\n", channelId, timestamp)
 
 	return nil
 }
