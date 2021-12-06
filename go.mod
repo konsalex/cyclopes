@@ -10,13 +10,12 @@ require (
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/pterm/pterm v0.12.33 // indirect
+	github.com/pterm/pterm v0.12.33
 	github.com/schollz/progressbar/v3 v3.8.3
 	github.com/slack-go/slack v0.10.0
 	github.com/spf13/cobra v1.2.1
 	golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871 // indirect
 	golang.org/x/sys v0.0.0-20211124211545-fe61309f8881 // indirect
-	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )

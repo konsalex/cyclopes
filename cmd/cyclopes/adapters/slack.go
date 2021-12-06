@@ -27,13 +27,13 @@ type SlackRoot struct {
 	Slack              SlackConfiguration `yaml:"slack"`
 }
 
-type Adapters struct {
+type slackAdapter struct {
 	Adapters SlackRoot `yaml:"adapters"`
 }
 
 func (s *SlackAdapter) Preflight() error {
-
-	conf := Adapters{}
+	pterm.Info.Println("Preflight check for Slack Adapter")
+	conf := slackAdapter{}
 	err := yaml.Unmarshal(*s.Yaml, &conf)
 
 	if err != nil {
@@ -56,7 +56,7 @@ func (s *SlackAdapter) Preflight() error {
 }
 
 func (s *SlackAdapter) Execute(imagePath string) error {
-	conf := Adapters{}
+	conf := slackAdapter{}
 	err := yaml.Unmarshal(*s.Yaml, &conf)
 
 	if err != nil {
@@ -72,8 +72,6 @@ func (s *SlackAdapter) Execute(imagePath string) error {
 		2. Compose them in a markdown and post them (Gallery mode not supported)
 		3. Create a new button message with the URL of the previous created message to go on top (avoid scrolling up)
 	*/
-	// var files []string
-
 	files, err := ioutil.ReadDir(imagePath)
 	if err != nil {
 		return err

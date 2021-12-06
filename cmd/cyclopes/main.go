@@ -8,8 +8,8 @@ import (
 	"github.com/chromedp/chromedp"
 	"github.com/fatih/color"
 	"github.com/google/uuid"
+	"github.com/konsalex/cyclopes/cmd/cyclopes/adapters"
 
-	// adapters "github.com/konsalex/cyclopes/cmd/cyclopes/adapters"
 	"github.com/pterm/pterm"
 	"github.com/schollz/progressbar/v3"
 	"gopkg.in/yaml.v2"
@@ -89,6 +89,25 @@ func Start(configPath string) {
 		pterm.Fatal.Println(err)
 	}
 
+	/* ------------- Loading Adapters ----------------- */
+	var adapterInstances = make(map[string]adapters.AdapterInterface)
+	for key := range conf.Adapters {
+		fmt.Println(key)
+		a, err := adapters.NewAdapter(key, &yamlFile)
+		if err != nil {
+			panic(err)
+		}
+		adapterInstances[key] = a
+	}
+	// Preflight checks for all adapters to avoid unnecessary test
+	// if they are not properly configured
+	for _, adapter := range adapterInstances {
+		err := adapter.Preflight()
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	if conf.Visual != nil {
 		pterm.Info.Println("Session ID: " + color.GreenString(conf.sessionID))
 
@@ -134,25 +153,13 @@ func Start(configPath string) {
 		pterm.Warning.Println("Skipping visual testing")
 	}
 
-	fmt.Println(conf.Adapters)
-	for key := range conf.Adapters {
-		fmt.Println(key)
-		if AdaptersMap[key] != nil {
-			// fmt.Println(AdaptersMap[key])
-			// AdaptersMap[key]{Yaml}
-
+	// Execute all defined adapters
+	for _, adapter := range adapterInstances {
+		err := adapter.Execute(conf.ImagesDir)
+		if err != nil {
+			panic(err)
 		}
 	}
-	// slackAdapter := adapters.SlackAdapter{Yaml: &yamlFile}
-	// err = slackAdapter.Preflight()
-	// if err != nil {
-	// 	pterm.Fatal.Println(err)
-	// }
-
-	// err = slackAdapter.Execute(conf.ImagesDir)
-	// if err != nil {
-	// 	pterm.Error.Println(err)
-	// }
 
 	pterm.Success.Println("Finised Visual Testing")
 }
