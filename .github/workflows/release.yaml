@@ -49,10 +49,10 @@ jobs:
       - name: Release NPM package
         run: |
           git config --global user.name "$USER" && git config --global user.email "$USER@$HOSTNAME"
-        #   ls -l
-        #   cat package.json
-        #   npm version ${{steps.get_tag.outputs.TAG}}
-        #   cat package.json
-        #   npm publish --access public
-        # env:
-        #   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          ls -l
+          cat package.json
+          npm version ${{steps.get_tag.outputs.TAG}}
+          cat package.json
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
