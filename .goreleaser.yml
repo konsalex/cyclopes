@@ -11,6 +11,7 @@ builds:
       - darwin
     goarch:
       - amd64
+    binary: cyclopes
 checksum:
   name_template: "checksums.txt"
 snapshot:
@@ -21,3 +22,4 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+      - Merge pull request

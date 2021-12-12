@@ -76,13 +76,13 @@ adapters:
 
 ## Useful Parameters
 
-| parameter    | values                      | default value | required | description                                                                                     |     |     |     |     |     |
-| ------------ | --------------------------- | ------------- | -------- | ----------------------------------------------------------------------------------------------- | --- | --- | --- | --- | --- |
-| `imagesDir`  | string                      | null          | yes      | The path where the images will be saved or retrieved from the adapters                          |     |     |     |     |     |
-| `headless`   | bool                        | true          | no       | If our visual testing session will open the chrome browser in headless mode                     |     |     |     |     |     |
-| `device`     | `desktop`, `mobile`, `both` | `both`        | no       | Viewport of device we should screenshot                                                         |     |     |     |     |     |
-| `screenshot` | `fullpage`, `viewport`      | `viewport`    | no       | Current viewport or fullpage screenshot                                                         |     |     |     |     |     |
-| `code`       | string                      |               | no       | Javascript code to execute inside page. It can be a Promise that will be waited to be fulfilled |     |     |     |     |     |
+| parameter    | values                      | default value | required | description                                                                                     |
+| ------------ | --------------------------- | ------------- | -------- | ----------------------------------------------------------------------------------------------- |
+| `imagesDir`  | string                      | null          | yes      | The path where the images will be saved or retrieved from the adapters                          |
+| `headless`   | bool                        | true          | no       | If our visual testing session will open the chrome browser in headless mode                     |
+| `device`     | `desktop`, `mobile`, `both` | `both`        | no       | Viewport of device we should screenshot                                                         |
+| `screenshot` | `fullpage`, `viewport`      | `viewport`    | no       | Current viewport or fullpage screenshot                                                         |
+| `code`       | string                      |               | no       | Javascript code to execute inside page. It can be a Promise that will be waited to be fulfilled |
 
 <span style="display:block;margin-top:80px" class="breaking-gap"/>
 
