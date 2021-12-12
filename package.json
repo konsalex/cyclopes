@@ -1,0 +1,32 @@
+{
+  "name": "cyclopes",
+  "version": "0.0.1",
+  "description": "CLI for quick visual testing",
+  "bin": {
+    "cyclopes": "build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/konsalex/cyclopes.git"
+  },
+  "keywords": [
+    "cli",
+    "visual testing",
+    "golang",
+    "go",
+    "npm",
+    "cobra",
+    "testing"
+  ],
+  "files": [
+    "dist/*",
+    "build.js"
+  ],
+  "author": "Costa A.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/konsalex/cyclopes/issues"
+  },
+  "homepage": "https://github.com/konsalex/cyclopes#readme",
+  "dependencies": {}
+}
