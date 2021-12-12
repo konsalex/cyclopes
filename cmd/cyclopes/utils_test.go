@@ -8,8 +8,8 @@ var UserDefinedURL = "https://www.visualeyes.design"
 
 var defaultVisual = VisualTesting{}
 var remote = VisualTesting{RemoteURL: "https://www.visualeyes.design"}
-var Default = Configuration{VisualTesting: defaultVisual}
-var RemoteURL = Configuration{VisualTesting: remote}
+var Default = Configuration{Visual: &defaultVisual}
+var RemoteURL = Configuration{Visual: &remote}
 
 func TestExtractServerURsL(t *testing.T) {
 

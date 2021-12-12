@@ -9,7 +9,8 @@ import (
 
 func (config *Configuration) ExtractServerURL() string {
 	var serverPath string
-
+	fmt.Println(config)
+	fmt.Println(config.Visual)
 	if config.Visual.RemoteURL == "" {
 		serverPath = DEFAULT_URL
 	} else {
