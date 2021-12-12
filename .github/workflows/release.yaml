@@ -22,6 +22,15 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.17
+      # Go modules cache: https://github.com/actions/cache/blob/main/examples.md#go---modules
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+    restore-keys: |
+      ${{ runner.os }}-go-
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:

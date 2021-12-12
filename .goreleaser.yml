@@ -11,7 +11,9 @@ builds:
       - darwin
     goarch:
       - amd64
-    binary: cyclopes
+archives:
+  - format: binary
+    name_template: "testing-{{.Os}}-{{.Arch}}-{{.Version}}"
 checksum:
   name_template: "checksums.txt"
 snapshot:
