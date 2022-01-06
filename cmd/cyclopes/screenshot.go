@@ -10,14 +10,12 @@ import (
 	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/chromedp"
 	"github.com/pterm/pterm"
-	"github.com/schollz/progressbar/v3"
 )
 
 func Screenshot(
 	ctx context.Context,
 	config *Configuration,
-	pageConfig *PageConfig,
-	bar *progressbar.ProgressBar) {
+	pageConfig *PageConfig) {
 
 	serverPath := config.ExtractServerURL()
 
@@ -29,11 +27,14 @@ func Screenshot(
 	var buf []byte
 
 	// Check current URL, if the previous subdirectory part of the URL
-	// is the same with the current url, we reload the page on purpos
+	// is the same with the current url, we reload the page on purpose
+	// Example:
+	// Previous session: could be "/"
+	// Current session: could be "/#about"
 	var location string
 	if err := chromedp.Run(ctx,
 		chromedp.Tasks{
-			chromedp.Sleep(time.Millisecond * 2000),
+			chromedp.Sleep(time.Millisecond * 500),
 			chromedp.Location(&location),
 		}); err != nil {
 		pterm.Fatal.Println(err)
@@ -54,45 +55,33 @@ func Screenshot(
 
 	var filename string
 
-	if pageConfig.Device == DESKTOP || pageConfig.Device == MOBILE {
+	devices := []DEVICE{DESKTOP, MOBILE}
+	for idx, device := range devices {
+		if pageConfig.Device != BOTH && pageConfig.Device != device {
+			continue
+		}
+
+		// Timeout in 20 seconds of running the task
+		ctx, cancel := context.WithTimeout(ctx, time.Duration(time.Second*20))
+		defer cancel()
+
+		/** Both Cases so two screenshots (in the second case we should not scroll) */
+		pterm.Info.Printfln("[%s]: Screenshotting %s", device, screenshotURL)
 		if err := chromedp.Run(ctx, fullScreenshot(
 			screenshotURL,
 			95,
 			pageConfig,
-			pageConfig.Device,
-			scrolling,
+			device,
+			scrolling && idx == 0,
 			&buf)); err != nil {
 			pterm.Fatal.Println(err)
 		}
-
-		filename = fmt.Sprintf("%s-%s", string(pageConfig.Device), strings.Replace(pageConfig.Path, "/", "", -1))
-
+		filename = fmt.Sprintf("%s-%s", string(device), strings.Replace(pageConfig.Path, "/", "", -1))
 		error := SaveFile(buf, config.ImagesDir, filename)
 		if error != nil {
 			pterm.Warning.Println(err)
 		}
-	} else {
-		devices := []DEVICE{DESKTOP, MOBILE}
-		for idx, device := range devices {
-			/** Both Cases so two screenshots (in the second case we should not scroll) */
-			if err := chromedp.Run(ctx, fullScreenshot(
-				screenshotURL,
-				95,
-				pageConfig,
-				device,
-				scrolling && idx == 0,
-				&buf)); err != nil {
-				pterm.Fatal.Println(err)
-			}
-			filename = fmt.Sprintf("%s-%s", string(device), strings.Replace(pageConfig.Path, "/", "", -1))
-			error := SaveFile(buf, config.ImagesDir, filename)
-			if error != nil {
-				pterm.Warning.Println(err)
-			}
-		}
 	}
-
-	bar.Add(1)
 }
 
 func fullScreenshot(
@@ -151,6 +140,18 @@ func fullScreenshot(
 			})
 	}
 
+	/*
+		Waiting for an element to appear
+		Important to state that first we wait for the element to appear
+		and then we execute any JS code
+	*/
+	if pageConfig.WaitSelector != "" {
+		tasks = append(tasks,
+			chromedp.Tasks{
+				chromedp.WaitVisible(pageConfig.WaitSelector)},
+		)
+	}
+
 	/** Execute JS Code inside page */
 	if pageConfig.Code != "" {
 		tasks = append(tasks,
@@ -163,31 +164,24 @@ func fullScreenshot(
 		)
 	}
 
-	/** Waiting for an element to appear */
-	if pageConfig.WaitSelector != "" {
-		tasks = append(tasks,
-			chromedp.Tasks{
-				chromedp.WaitVisible(pageConfig.WaitSelector)},
-		)
-	}
-
 	tasks = append(tasks, chromedp.Tasks{
 		/** User defined sleep */
 		chromedp.Sleep(time.Millisecond * time.Duration(pageConfig.Delay)),
 	})
 
-	if pageConfig.Screenshot == FULLPAGE {
-		tasks = append(tasks, chromedp.Tasks{
-			/** User defined sleep */
-			chromedp.Sleep(time.Millisecond * time.Duration(pageConfig.Delay)),
-			chromedp.FullScreenshot(res, quality),
-		})
-	} else {
+	if pageConfig.Screenshot == VIEWPORT {
 		tasks = append(tasks, chromedp.Tasks{
 			/** User defined sleep */
 			chromedp.Sleep(time.Millisecond * time.Duration(pageConfig.Delay)),
 			chromedp.CaptureScreenshot(res),
 		})
+	} else {
+		tasks = append(tasks, chromedp.Tasks{
+			/** User defined sleep */
+			chromedp.Sleep(time.Millisecond * time.Duration(pageConfig.Delay)),
+			chromedp.FullScreenshot(res, quality),
+		})
+
 	}
 
 	return tasks

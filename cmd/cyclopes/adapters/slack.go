@@ -10,44 +10,29 @@ import (
 
 	"github.com/pterm/pterm"
 	"github.com/slack-go/slack"
-	"gopkg.in/yaml.v2"
+	"github.com/spf13/viper"
 )
 
 type SlackAdapter struct {
-	Yaml *[]byte
-}
-
-type SlackConfiguration struct {
-	OAUTH_TOKEN string `yaml:"OAUTH_TOKEN"`
-	CHANNEL_ID  string `yaml:"CHANNEL_ID"`
-}
-
-type SlackRoot struct {
-	SlackConfiguration `yaml:",inline"`
-	Slack              SlackConfiguration `yaml:"slack"`
-}
-
-type slackAdapter struct {
-	Adapters SlackRoot `yaml:"adapters"`
+	OAUTH_TOKEN string
+	CHANNEL_ID  string
 }
 
 func (s *SlackAdapter) Preflight() error {
 	pterm.Info.Println("Preflight check for Slack Adapter")
-	conf := slackAdapter{}
-	err := yaml.Unmarshal(*s.Yaml, &conf)
 
-	if err != nil {
-		return err
+	conf := SlackAdapter{
+		OAUTH_TOKEN: viper.GetString("adapters.slack.oauth_token"),
+		CHANNEL_ID:  viper.GetString("adapters.slack.channel_id"),
 	}
-
-	if conf.Adapters.Slack.CHANNEL_ID == "" || conf.Adapters.Slack.OAUTH_TOKEN == "" {
+	if conf.CHANNEL_ID == "" || conf.OAUTH_TOKEN == "" {
 		return errors.New("slack configuration is not set properly")
 	}
 
-	api := slack.New(conf.Adapters.Slack.OAUTH_TOKEN)
+	api := slack.New(conf.OAUTH_TOKEN)
 
 	// Validate that user can make authenticated requests
-	_, err = api.AuthTest()
+	_, err := api.AuthTest()
 	if err != nil {
 		return err
 	}
@@ -56,14 +41,12 @@ func (s *SlackAdapter) Preflight() error {
 }
 
 func (s *SlackAdapter) Execute(imagePath string) error {
-	conf := slackAdapter{}
-	err := yaml.Unmarshal(*s.Yaml, &conf)
-
-	if err != nil {
-		return err
+	conf := SlackAdapter{
+		OAUTH_TOKEN: viper.GetString("adapters.slack.oauth_token"),
+		CHANNEL_ID:  viper.GetString("adapters.slack.channel_id"),
 	}
 
-	api := slack.New(conf.Adapters.Slack.OAUTH_TOKEN)
+	api := slack.New(conf.OAUTH_TOKEN)
 
 	/*
 		Source: https://stackoverflow.com/a/63391026/3247715
@@ -130,7 +113,7 @@ func (s *SlackAdapter) Execute(imagePath string) error {
 	}
 
 	channelId, timestamp, err := api.PostMessage(
-		conf.Adapters.Slack.CHANNEL_ID,
+		conf.CHANNEL_ID,
 		slack.MsgOptionText(mrkdwnBody, false),
 	)
 

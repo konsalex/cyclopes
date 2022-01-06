@@ -7,6 +7,8 @@
 - [🔌 Adapters](#-adapters)
 <!-- tocstop -->
 
+---
+
 ## 🗒 Description
 
 Cyclopes is a CLI tool to help us manage simple visual testing tasks, so we can feel more confident shipping our code.
@@ -37,10 +39,11 @@ visual:
   # (Optional): URL to visit. If this field does
   # not exist, builDir is required
   remoteURL: https://www.neo4j.com/
-  # Directory to serve for testing. Required
-  # only if remoteURL is missing
+  # Directory to serve for testing.
+  # Required only if remoteURL is missing
   buildDir: "./public"
   # If the testing session will be headless or not
+  # for debugging purposes
   headless: true
   # Pages to visit and screenshot
   pages:
@@ -81,7 +84,7 @@ adapters:
 | `imagesDir`  | string                      | null          | yes      | The path where the images will be saved or retrieved from the adapters                          |
 | `headless`   | bool                        | true          | no       | If our visual testing session will open the chrome browser in headless mode                     |
 | `device`     | `desktop`, `mobile`, `both` | `both`        | no       | Viewport of device we should screenshot                                                         |
-| `screenshot` | `fullpage`, `viewport`      | `viewport`    | no       | Current viewport or fullpage screenshot                                                         |
+| `screenshot` | `fullpage`, `viewport`      | `fullpage`    | no       | Screenshotting the current viewport or fullpage screenshot                                      |
 | `code`       | string                      |               | no       | Javascript code to execute inside page. It can be a Promise that will be waited to be fulfilled |
 
 <span style="display:block;margin-top:80px" class="breaking-gap"/>
@@ -95,10 +98,17 @@ Soon more will be added like Trello etc. Any recommendation is welcome.
 ### Slack adapter
 
 <details>
-<summary>SHOW SOURCE</summary>
+<summary>Expand</summary>
 
 ```yaml
 slack:
-  OAUTH_TOKEN: example-token
-  CHANNEL_ID: example-channel-id
+  oauth_token: example-token
+  channel_id: example-channel-id
+```
+
+or as _environment variables_
+
+```sh
+export ADAPTERS_SLACK_CHANNEL_ID=example-channel-id
+export ADAPTERS_SLACK_OAUTH_TOKEN=example-token
 ```

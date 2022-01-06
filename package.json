@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "CLI for quick visual testing",
   "bin": {
-    "cyclopes": "build.js"
+    "cyclopes": "bin.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
   ],
   "files": [
     "dist/*",
-    "build.js"
+    "bin.js"
   ],
   "author": "Costa A.",
   "license": "MIT",

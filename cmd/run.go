@@ -35,9 +35,9 @@ func init() {
 
 func initConfig() {
 	if cfgFile != "" {
-		pterm.Info.Printfln("Using config file:", cfgFile)
+		pterm.Info.Println("Using config file:", cfgFile)
 	} else {
-		pterm.Info.Printfln("Using default config file:", "./cyclops.yml")
+		pterm.Info.Println("Using default config file:", "./cyclops.yml")
 		cfgFile = "./cyclops.yml"
 	}
 }

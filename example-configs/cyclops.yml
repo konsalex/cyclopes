@@ -19,7 +19,7 @@ visual:
     # Path of the page
     - path: "/"
       # Type of device to screenshot
-      device: "both"
+      device: "desktop"
       # Delay after the page is loaded
       delay: 2000
       # Wait for an element to appear
@@ -35,11 +35,12 @@ visual:
         }
     - path: "/product"
       device: "mobile"
-      screenshot: "fullpage"
+      screenshot: "viewport"
     - path: "/product/graph-data-science/"
+      device: "both"
 # Adapters
 # Each adapter will have it's own parameters
 adapters:
   slack:
-    OAUTH_TOKEN: xoxb-339937470980-2788496503985-E9o8DABUyi04kAdkf6J6XuKE
-    CHANNEL_ID: C02NM4RC8FQ
+    oauth_token: example-token
+    channel_id: example-channel-id

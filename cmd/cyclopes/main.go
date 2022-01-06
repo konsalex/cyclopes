@@ -2,17 +2,16 @@ package cyclopes
 
 import (
 	"context"
-	"fmt"
-	"io/ioutil"
+	"strings"
 
 	"github.com/chromedp/chromedp"
 	"github.com/fatih/color"
 	"github.com/google/uuid"
 	"github.com/konsalex/cyclopes/cmd/cyclopes/adapters"
+	"github.com/spf13/viper"
 
 	"github.com/pterm/pterm"
 	"github.com/schollz/progressbar/v3"
-	"gopkg.in/yaml.v2"
 )
 
 type DEVICE string
@@ -48,7 +47,7 @@ type PageConfig struct {
 type VisualTesting struct {
 	Pages []PageConfig
 
-	// If the users want to debug
+	// If users want to debug
 	Headless *bool `yaml:"headless"`
 
 	// Base url to visit in our session
@@ -72,33 +71,51 @@ type Configuration struct {
 }
 
 func Start(configPath string) {
-	// YAML Unmarshal
+	// Initialise Configuration struct
 	conf := Configuration{
-		ImagesDir: "./cyclopes",
 		sessionID: uuid.NewString(),
 	}
 
-	// Read config file
-	yamlFile, err := ioutil.ReadFile(configPath)
+	// Unmarshal YAML with Viper
+	viper.AutomaticEnv()
+	viper.SetConfigName(configPath)
+	viper.AddConfigPath(".")
+	viper.SetConfigType("yaml")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+	err := viper.ReadInConfig()
 	if err != nil {
-		pterm.Fatal.Println(err)
+		pterm.Fatal.Printfln("Fatal error config file: %s", err)
 	}
 
-	err = yaml.Unmarshal(yamlFile, &conf)
+	err = viper.Unmarshal(&conf)
 	if err != nil {
-		pterm.Fatal.Println(err)
+		pterm.Fatal.Printfln("Unable to parse the config file, %s", err)
+	}
+
+	// Throw if ImagesDir is not defined
+	if conf.ImagesDir == "" {
+		pterm.Error.Println("imagesDir is not defined")
+		panic("imagesDir is not defined")
 	}
 
 	/* ------------- Loading Adapters ----------------- */
+	/*
+	  We allow adapters to be empty arrays if the variables
+	  are stored as env variables.
+	  Check `example-configs/novisual.yml` for more info.
+	*/
 	var adapterInstances = make(map[string]adapters.AdapterInterface)
+	pterm.Info.Println("Loading adapters")
 	for key := range conf.Adapters {
-		fmt.Println(key)
-		a, err := adapters.NewAdapter(key, &yamlFile)
+		pterm.Info.Println("Adapter: " + key)
+		a, err := adapters.NewAdapter(key)
 		if err != nil {
 			panic(err)
 		}
 		adapterInstances[key] = a
 	}
+
 	// Preflight checks for all adapters to avoid unnecessary test
 	// if they are not properly configured
 	for _, adapter := range adapterInstances {
@@ -108,9 +125,9 @@ func Start(configPath string) {
 		}
 	}
 
-	if conf.Visual != nil {
-		pterm.Info.Println("Session ID: " + color.GreenString(conf.sessionID))
+	pterm.Info.Println("Session ID: " + color.GreenString(conf.sessionID))
 
+	if conf.Visual != nil {
 		if err := CheckPath(conf.ImagesDir); err != nil {
 			pterm.Fatal.Println(err)
 		}
@@ -143,14 +160,24 @@ func Start(configPath string) {
 		/** Initialise ChromeDp **/
 		ctx, cancel := chromedp.NewContext(allocCtx)
 		defer cancel()
+		/*
+			chromedp handles context unexpectly,
+			so we need to run an empty task first
+			https://github.com/chromedp/chromedp/issues/513
+		*/
+		if err := chromedp.Run(ctx); err != nil {
+			pterm.Error.Println(err)
+			panic(err)
+		}
 
 		pterm.Success.Println("Starting Visual Testing session")
 		bar := progressbar.Default(int64(len(conf.Visual.Pages)))
 		for _, v := range conf.Visual.Pages {
-			Screenshot(ctx, &conf, &v, bar)
+			Screenshot(ctx, &conf, &v)
+			bar.Add(1)
 		}
 	} else {
-		pterm.Warning.Println("Skipping visual testing")
+		pterm.Info.Println("Skipping visual testing")
 	}
 
 	// Execute all defined adapters

@@ -1,7 +1,6 @@
 package cyclopes
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/pterm/pterm"
@@ -15,7 +14,7 @@ func Server(path string) {
 	go func() {
 		err := http.ListenAndServe(":3000", nil)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 	}()
 }

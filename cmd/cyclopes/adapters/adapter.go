@@ -13,10 +13,10 @@ type AdapterInterface interface {
 	Execute(imagePath string) error
 }
 
-func NewAdapter(name string, yaml *[]byte) (AdapterInterface, error) {
+func NewAdapter(name string) (AdapterInterface, error) {
 	switch name {
 	case "slack":
-		return &SlackAdapter{Yaml: yaml}, nil
+		return &SlackAdapter{}, nil
 	default:
 		return nil, errors.New("Adapter not found")
 	}
