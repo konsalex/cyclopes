@@ -11,6 +11,10 @@ builds:
       - darwin
     goarch:
       - amd64
+blobs:
+  - provider: s3
+    region: eu-west-1
+    bucket: cyclopes
 archives:
   - format: binary
     name_template: "cyclopes-{{.Os}}-{{.Arch}}-{{.Version}}"
