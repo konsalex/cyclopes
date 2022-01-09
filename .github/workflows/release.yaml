@@ -43,17 +43,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      # - uses: actions/setup-node@v2
-      #   with:
-      #     node-version: "14"
-      #     registry-url: https://registry.npmjs.org/
-      # - name: Get the git tag published from GoReleaser
-      #   id: get_tag
-      #   run: echo ::set-output name=TAG::$(git describe --abbrev=0 --tags)
-      # - name: Release NPM package
-      #   run: |
-      #     git config --global user.name "$USER" && git config --global user.email "$USER@$HOSTNAME"
-      #     npm --no-git-tag-version version ${{steps.get_tag.outputs.TAG}}
-      #     npm publish --access public
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          registry-url: https://registry.npmjs.org/
+      - name: Get the git tag published from GoReleaser
+        id: get_tag
+        run: echo ::set-output name=TAG::$(git describe --abbrev=0 --tags)
+      - name: Release NPM package
+        run: |
+          git config --global user.name "$USER" && git config --global user.email "$USER@$HOSTNAME"
+          npm --no-git-tag-version version ${{steps.get_tag.outputs.TAG}}
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
