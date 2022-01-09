@@ -11,6 +11,13 @@ let name;
 const { version } = package;
 const basePath = `${__dirname}/dist`;
 
+// If "dist" directory does not exist, create it
+if (!fs.existsSync(basePath)) {
+  fs.mkdir(basePath, { recursive: true }, (err) => {
+    if (err) throw err;
+  });
+}
+
 // Binary name depending on the OS
 if (os.type() === "Linux") {
   name = `cyclopes-linux-amd64-${version}`;
