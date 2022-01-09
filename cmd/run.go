@@ -13,9 +13,9 @@ var rootCmd = &cobra.Command{
 	Short: "Quick and dirty Visual Testing",
 	Long: `
 The _quick and dirty_ testing manifesto:
-  1. Stop lying about your code, you do not write tests.
-  2. Reduce the headaches of broken styles, by running visual tests.
-  3. Be more confident that you ship good products.	
+  1. Stop lying about your E2E testing, you do not have visual tests.
+  2. Reduce the headaches of broken styles, just run visual tests.
+  3. Be more confident that you ship good web products, again run visual tests.
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		pterm.FgLightYellow.Println("🧿 Starting visual testing")
