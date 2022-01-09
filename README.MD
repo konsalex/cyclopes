@@ -1,35 +1,84 @@
-# Cyclopes
+# <h1 align="center"> cyclopes </h1>
 
 <!-- toc -->
 
-- [🗒 Description](#-description)
-- [💻 How to configure](#-how-to-configure)
-- [🔌 Adapters](#-adapters)
+- [Description](#description)
+- [Installation](#installation)
+- [How to use](#how-to-use)
+- [How to configure](#how-to-configure)
+- [Useful Parameters](#useful-parameters)
+- [🔌 Adapters](#---adapters)
+  - [Slack adapter](#slack-adapter)
+
 <!-- tocstop -->
 
 ---
 
-## 🗒 Description
-
-Cyclopes is a CLI tool to help us manage simple visual testing tasks, so we can feel more confident shipping our code.
-
-Visual testing with Cyclopes includes screenshotting our desired pages, but also sending the results to the tools we use (like Slack) so we can review the results.
-
-<!-- Some useful use cases:
-
-1. Visual test our Gatsby/NextJS etc marketing websites. If you are not writing tests (which is often the case with marketing websites), you can use this tool to check if your website is rendered as expected.
-
-2. Perform quick sanity checks, like checking if your website is not having any broken style, and all this inside the tools of your workflow (ex. Slack). -->
+[![Release Cyclopes](https://github.com/konsalex/cyclopes/actions/workflows/release.yaml/badge.svg)](https://github.com/konsalex/cyclopes/actions/workflows/release.yaml)
+![npm](https://img.shields.io/npm/v/cyclopes)
+[![Gitter](https://badges.gitter.im/cyclopes-clip/community.svg)](https://gitter.im/cyclopes-clip/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 <span style="display:block;margin-top:80px" class="breaking-gap"/>
+ 
+## Description
 
-## 💻 How to configure
+**Cyclopes is lightweight CLI tool to help us perform simple visual testing tasks, so we can feel more confident shipping our code.**
 
-The configuration (yaml) file will start we two root steps, the `visual` and `adapters`, both which are optional. Below is an example of a yaml configuration file and then a table with the values and their possible options.
+Visual testing with Cyclopes includes screenshotting our desired pages, but also sending the results to the tools we use (like Slack) so we can make a quick review.
+
+Some useful use cases:
+
+1. Visual test your GatsbyJS/NextJS etc. marketing websites. If you are not writing tests (which is often the case with marketing websites), you can use **cyclopes** to check if your website is rendered as expected.
+
+2. Integrate visual testing with your CI, and send generated screeenshots to a dev Slack channel. The screenshots can be taken from Cypress.js or any other E2E testing framework you already use.
+
+**Cyclopes** is only using Chrome to test as it is based in [chromedp](https://github.com/chromedp/chromedp).
+
+> 💡 Cyclopes is not Visual Testing as a Service (Percy, Chromatic etc), but something to bridge the gap between not having a visual test, and having a complicated setup to work with.
+
+## Installation
+
+With `npm` or `yarn`
+
+```bash
+# npm
+npm install cyclopes
+
+# yarn
+yarn add cyclopes
+```
+
+With `go get`
+
+```bash
+go get -u github.com/konsalex/cyclopes
+```
+
+Or you can download the binaries directly from [Github releases](https://github.com/konsalex/cyclopes/releases).
+
+## How to use
+
+The usage is fairly simple. You can run
+
+```
+cyclopes
+```
+
+which will try to find the default yaml file `cyclops.yml` in the current directory.
+
+If you want to use a different file name, you can use
+
+```bash
+cyclopes --config=./your-config.yml
+```
+
+## How to configure
+
+The configuration (yaml) file will start with two root steps, the `visual` and `adapters`, both which are optional. Below is an example of a yaml configuration file and below a table with the values and their possible options.
 
 ```yaml
 # Directory where the images will be saved
-# or retrieved from the channel adapters
+# and/or retrieved from the channel adapters
 imagesDir: "./images"
 
 # If visual is defined, it will be the first step
@@ -87,8 +136,6 @@ adapters:
 | `screenshot` | `fullpage`, `viewport`      | `fullpage`    | no       | Screenshotting the current viewport or fullpage screenshot                                      |
 | `code`       | string                      |               | no       | Javascript code to execute inside page. It can be a Promise that will be waited to be fulfilled |
 
-<span style="display:block;margin-top:80px" class="breaking-gap"/>
-
 ## 🔌 Adapters
 
 Right now only Slack adapter is supported.
@@ -112,3 +159,5 @@ or as _environment variables_
 export ADAPTERS_SLACK_CHANNEL_ID=example-channel-id
 export ADAPTERS_SLACK_OAUTH_TOKEN=example-token
 ```
+
+</details>

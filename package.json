@@ -12,14 +12,14 @@
   "keywords": [
     "cli",
     "visual testing",
+    "testing",
     "golang",
     "go",
     "npm",
     "cobra",
-    "testing"
+    "viper"
   ],
   "files": [
-    "dist/*",
     "bin.js"
   ],
   "author": "Costa A.",
