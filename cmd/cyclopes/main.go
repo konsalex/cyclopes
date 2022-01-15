@@ -139,7 +139,8 @@ func Start(configPath string) {
 			if conf.Visual.BuildDir == "" {
 				pterm.Fatal.Println("You must define either remoteURL or buildDir")
 			}
-			Server(conf.VisualTesting.BuildDir)
+			pterm.Info.Println("Serving static assets from: " + color.GreenString(conf.Visual.BuildDir))
+			Server(conf.Visual.BuildDir)
 		}
 
 		/** Enable Headless mode for testing **/
