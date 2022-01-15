@@ -69,7 +69,7 @@ which will try to find the default yaml file `cyclops.yml` in the current direct
 If you want to use a different file name, you can use
 
 ```bash
-cyclopes --config=./your-config.yml
+cyclopes --config your-config.yml # or --config=./your-config.yml, the first provides better path auto-completion
 ```
 
 ## How to configure
