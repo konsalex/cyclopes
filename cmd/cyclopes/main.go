@@ -133,7 +133,6 @@ func Start(configPath string) {
 		}
 		pterm.Info.Println("Images will be saved at: " + color.GreenString(conf.ImagesDir))
 
-		// var srvr *Server
 		// Source: https://stackoverflow.com/a/42533360/3247715
 		if conf.Visual.RemoteURL == "" {
 			if conf.Visual.BuildDir == "" {
