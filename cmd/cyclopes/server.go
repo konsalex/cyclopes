@@ -15,7 +15,6 @@ func Server(path string) *http.Server {
 	}
 
 	fs := http.FileServer(http.Dir(path))
-	// http.Handle("/", fs)
 
 	pterm.Info.Println("Serving path: `" + path + "` on port :3000")
 	server := &http.Server{Addr: ":3000", Handler: fs}
