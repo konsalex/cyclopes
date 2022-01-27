@@ -14,6 +14,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 )
 
+// DEVICE The screenshot type
 type DEVICE string
 
 const (
@@ -22,6 +23,7 @@ const (
 	BOTH    DEVICE = "both"
 )
 
+// SCREENSHOTSIZE Fullpage or Viewport screenshot
 type SCREENSHOTSIZE string
 
 const FULLPAGE SCREENSHOTSIZE = "fullpage"
@@ -29,6 +31,8 @@ const VIEWPORT SCREENSHOTSIZE = "viewport"
 
 const DEFAULT_URL = "http://localhost:3000"
 
+// PageConfig is a struct holding information about individual pages
+// that will be screenshotted
 type PageConfig struct {
 	// Relative path to visit
 	Path string
@@ -39,37 +43,41 @@ type PageConfig struct {
 	// Code (Javascript code to execute)
 	Code string
 	// Selector to wait
-	WaitSelector string
+	WaitSelector string `yaml:"waitSelector"`
 	// If the screenshot should be fullpage or viewport
 	Screenshot SCREENSHOTSIZE
 }
 
+// VisualTesting is a struct holding information
+// about visual testing sessions
 type VisualTesting struct {
 	Pages []PageConfig
 
 	// If users want to debug
-	Headless *bool `yaml:"headless"`
+	Headless *bool
 
 	// Base url to visit in our session
-	RemoteURL string `yaml:"remoteURL"`
-	/* Website directory
-	(used only if remoteURL is not
-	defined to serve the static assets)
-	*/
+	RemoteURL string `yaml:"remoteURL" head_comment:"Enable or disable."`
+
+	// BuildDir is used only if
+	// remoteURL is not defined
+	// (to serve the static assets)
+	// served on localhost:3000
 	BuildDir string `yaml:"buildDir"`
 }
 
+// Configuration struct
 type Configuration struct {
-	PageConfig    `yaml:",inline"`
-	VisualTesting `yaml:",inline"`
 	// Directory to save/retrieve images
-	ImagesDir string         `yaml:"imagesDir"`
-	Visual    *VisualTesting `yaml:"visual,omitempty"`
+	ImagesDir string `yaml:"imagesDir"`
+	Visual    *VisualTesting
 	// Testing session id
 	sessionID string
-	Adapters  map[string]interface{} `yaml:"adapters"`
+	Adapters  map[string]interface{}
 }
 
+// Start is the main starting point of
+// the visual testing application
 func Start(configPath string) {
 	// Initialise Configuration struct
 	conf := Configuration{

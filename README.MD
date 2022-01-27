@@ -17,9 +17,8 @@
 [![Release Cyclopes](https://github.com/konsalex/cyclopes/actions/workflows/release.yaml/badge.svg)](https://github.com/konsalex/cyclopes/actions/workflows/release.yaml)
 ![npm](https://img.shields.io/npm/v/cyclopes)
 [![Gitter](https://badges.gitter.im/cyclopes-clip/community.svg)](https://gitter.im/cyclopes-clip/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Go Report Card](https://goreportcard.com/badge/github.com/konsalex/cyclopes)](https://goreportcard.com/report/github.com/konsalex/cyclopes)
 
-<span style="display:block;margin-top:80px" class="breaking-gap"/>
- 
 ## Description
 
 **Cyclopes is lightweight CLI tool to help us perform simple visual testing tasks, so we can feel more confident shipping our code.**
@@ -75,6 +74,8 @@ cyclopes --config your-config.yml # or --config=./your-config.yml, the first pro
 ## How to configure
 
 The configuration (yaml) file will start with two root steps, the `visual` and `adapters`, both which are optional. Below is an example of a yaml configuration file and below a table with the values and their possible options.
+
+> 💡 Easily create a configuration file by running `cyclopes --generate`
 
 ```yaml
 # Directory where the images will be saved

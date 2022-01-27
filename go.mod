@@ -7,6 +7,7 @@ require (
 	github.com/chromedp/chromedp v0.7.4
 	github.com/fatih/color v1.13.0
 	github.com/google/uuid v1.3.0
+	github.com/manifoldco/promptui v0.9.0
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pterm/pterm v0.12.33
 	github.com/schollz/progressbar/v3 v3.8.3
@@ -14,4 +15,5 @@ require (
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.10.1
 	golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871 // indirect
+	gopkg.in/yaml.v2 v2.4.0
 )

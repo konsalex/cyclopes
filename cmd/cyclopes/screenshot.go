@@ -12,6 +12,8 @@ import (
 	"github.com/pterm/pterm"
 )
 
+// Screenshot takes a screenshot
+// for a specific PageConfig
 func Screenshot(
 	ctx context.Context,
 	config *Configuration,

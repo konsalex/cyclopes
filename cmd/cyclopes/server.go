@@ -8,6 +8,9 @@ import (
 	"github.com/pterm/pterm"
 )
 
+// Server spins-up a local server on :3000 to
+// serve the static files, if the Website is not published
+// yet nor served from a local server
 func Server(path string) *http.Server {
 	// If path does not exist, throw
 	if _, err := os.Stat(path); os.IsNotExist(err) {
