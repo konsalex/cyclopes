@@ -3,9 +3,7 @@ package adapters
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
-	"sort"
 	"strings"
 
 	"github.com/pterm/pterm"
@@ -55,25 +53,7 @@ func (s *SlackAdapter) Execute(imagePath string) error {
 		2. Compose them in a markdown and post them (Gallery mode not supported)
 		3. Create a new button message with the URL of the previous created message to go on top (avoid scrolling up)
 	*/
-	files, err := ioutil.ReadDir(imagePath)
-	if err != nil {
-		return err
-	}
-
-	sort.Slice(files, func(i, j int) bool {
-		return files[i].ModTime().Before(files[j].ModTime())
-	})
-
-	var filesSortedCleaned []string
-
-	for _, f := range files {
-		if !f.IsDir() {
-			parts := strings.Split(f.Name(), ".")
-			if parts[len(parts)-1] == "jpeg" {
-				filesSortedCleaned = append(filesSortedCleaned, f.Name())
-			}
-		}
-	}
+	filesSortedCleaned, err := SortedImageFileNames(imagePath)
 
 	if err != nil {
 		return err

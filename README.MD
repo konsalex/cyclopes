@@ -9,6 +9,7 @@
 - [Useful Parameters](#useful-parameters)
 - [🔌 Adapters](#---adapters)
   - [Slack adapter](#slack-adapter)
+  - [Trello adapter](#trello-adapter)
 
 <!-- tocstop -->
 
@@ -159,6 +160,35 @@ or as _environment variables_
 ```sh
 export ADAPTERS_SLACK_CHANNEL_ID=example-channel-id
 export ADAPTERS_SLACK_OAUTH_TOKEN=example-token
+```
+
+</details>
+
+### Trello adapter
+
+<details>
+<summary>Expand</summary>
+
+```yaml
+trello:
+  key: example-key
+  token: example-token
+  # check this from the URL
+  # Example https://trello.com/b/<board-id>
+  board_id: example-board-id
+  # Find it inside: https://trello.com/b/<board-id>.json
+  list_id: example-list-id
+  # Will only append existing labels based on the name of the label
+  labels: ["existing label 1", "existing label 2"]
+```
+
+or as _environment variables_
+
+```sh
+export ADAPTERS_TRELLO_KEY=example-example-key
+export ADAPTERS_TRELLO_TOKEN=example-example-token
+export ADAPTERS_TRELLO_BOARD_ID=example-board-id
+export ADAPTERS_TRELLO_LIST_ID=example-list-id
 ```
 
 </details>

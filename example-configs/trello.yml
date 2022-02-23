@@ -1,0 +1,10 @@
+imagesDir: "./images"
+
+adapters:
+  # Trello adapter will try to get ENV variables
+  # for key -> ADAPTERS_TRELLO_KEY
+  # for channel_id -> ADAPTERS_TRELLO_TOKEN
+  # for board_id -> ADAPTERS_TRELLO_BOARD_ID
+  # for list_id -> ADAPTERS_TRELLO_LIST_ID
+  trello:
+    labels: ["UI Testing 🔬", "Non Existing"] # The non-existing will throw an error

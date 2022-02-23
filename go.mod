@@ -3,6 +3,7 @@ module github.com/konsalex/cyclopes
 go 1.16
 
 require (
+	github.com/adlio/trello v1.9.0
 	github.com/chromedp/cdproto v0.0.0-20211107215322-d3760c2dc57b
 	github.com/chromedp/chromedp v0.7.4
 	github.com/fatih/color v1.13.0
@@ -17,3 +18,5 @@ require (
 	golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )
+
+replace github.com/adlio/trello => github.com/temamagic/trello v1.9.5
